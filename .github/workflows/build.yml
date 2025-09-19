@@ -3,7 +3,7 @@ name: Build portfolio report
 on:
   schedule:
     - cron: "*/5 * * * *"   # run every 5 minutes (UTC)
-  workflow_dispatch:
+  workflow_dispatch:         # manual run button
 
 permissions:
   contents: write
@@ -16,7 +16,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      TZ: Australia/Sydney
+      TZ: Australia/Sydney   # local timestamps for your script
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -27,7 +27,7 @@ jobs:
           python-version: "3.13"
 
       - name: Cache pip
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
@@ -38,9 +38,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Heartbeat (log only)
+        run: echo "Scheduled run at $(date -u)"
+
       - name: Generate report
         run: |
-          python generate.py
+          python generate.py        # update this filename if different!
           mkdir -p docs
           cp report.html docs/index.html
 
