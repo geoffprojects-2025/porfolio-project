@@ -1,4 +1,4 @@
-# v_3.0_patched.py
+# v_3.1.py
 import warnings
 warnings.simplefilter("ignore")
 
@@ -359,6 +359,7 @@ def main():
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>Portfolio</title>
+<link rel="apple-touch-icon" href="icon.png">
 <style>
   :root {{
     --navy: #0b1530;
