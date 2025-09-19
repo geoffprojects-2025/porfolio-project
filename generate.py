@@ -1,4 +1,4 @@
-# v_3.2
+# v_3.3
 import warnings
 warnings.simplefilter("ignore")
 
@@ -377,19 +377,19 @@ def main():
     * {{ box-sizing: border-box; }}
     html {{
         margin:0; padding:0;
-        background-color: var(--navy); /* fallback */
-    }}
-    body {{
-        margin:0; padding:0;
         background: linear-gradient(
         180deg,
         var(--navy) 0%,
-        var(--navy-2) 80%,
         var(--navy-2) 100%
         );
+    }}
+    body {{
+        margin:0; padding:0;
+        background: transparent;
         color:var(--text);
         font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif;
     }}
+
 
   .wrap {{ max-width: 760px; margin: 0 auto; padding: 16px 14px 28px; }}
 
