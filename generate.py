@@ -354,37 +354,42 @@ def main():
     """
 
     html = f"""<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>Portfolio</title>
-<link rel="apple-touch-icon" href="icon.png">
-<style>
-  :root {{
-    --navy: #0b1530;
-    --navy-2: #0f1d49;
-    --navy-3: #132866;
-    --card: #101b3f;
-    --border: rgba(255,255,255,0.12); /* bumped from 0.08 for contrast */
-    --text: #eef2ff;
-    --muted: #b7c1e3;
-    --pos: #22c55e;
-    --neg: #ef4444;
-    --neu: #9aa3b2;
-    --accent: #60a5fa;
-  }}
-  * {{ box-sizing: border-box; }}
-  html {{
-    margin:0; padding:0;
-    background-color: var(--navy); /* solid navy fallback for overscroll */
-  }}
-  body {{
-    margin:0; padding:0;
-    background: linear-gradient(180deg, var(--navy) 0%, var(--navy-2) 100%);
-    color:var(--text);
-    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif;
-  }}
+    <html lang="en">
+    <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+    <title>Portfolio</title>
+    <link rel="apple-touch-icon" href="icon.png">
+    <style>
+    :root {{
+        --navy: #0b1530;
+        --navy-2: #0f1d49;
+        --navy-3: #132866;
+        --card: #101b3f;
+        --border: rgba(255,255,255,0.12); /* bumped from 0.08 for contrast */
+        --text: #eef2ff;
+        --muted: #b7c1e3;
+        --pos: #22c55e;
+        --neg: #ef4444;
+        --neu: #9aa3b2;
+        --accent: #60a5fa;
+    }}
+    * {{ box-sizing: border-box; }}
+    html {{
+        margin:0; padding:0;
+        background-color: var(--navy); /* fallback */
+    }}
+    body {{
+        margin:0; padding:0;
+        background: linear-gradient(
+        180deg,
+        var(--navy) 0%,
+        var(--navy-2) 80%,
+        var(--navy-2) 100%
+        );
+        color:var(--text);
+        font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif;
+    }}
 
   .wrap {{ max-width: 760px; margin: 0 auto; padding: 16px 14px 28px; }}
 
