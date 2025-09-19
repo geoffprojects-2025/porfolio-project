@@ -2,17 +2,21 @@ name: Build portfolio report
 
 on:
   schedule:
-    - cron: "*/5 * * * *"  # run every hour
-  workflow_dispatch:       # manual run button
+    - cron: "*/5 * * * *"   # run every 5 minutes (UTC)
+  workflow_dispatch:
 
 permissions:
   contents: write
+
+concurrency:
+  group: build-portfolio
+  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      TZ: Australia/Sydney   # so timestamps are in your local time
+      TZ: Australia/Sydney
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -21,6 +25,13 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.13"
+
+      - name: Cache pip
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: ${{ runner.os }}-pip-
 
       - name: Install dependencies
         run: |
