@@ -1,4 +1,4 @@
-# v_3.1.py
+# v_3.2
 import warnings
 warnings.simplefilter("ignore")
 
@@ -375,12 +375,17 @@ def main():
     --accent: #60a5fa;
   }}
   * {{ box-sizing: border-box; }}
-  html, body {{
+  html {{
+    margin:0; padding:0;
+    background-color: var(--navy); /* solid navy fallback for overscroll */
+  }}
+  body {{
     margin:0; padding:0;
     background: linear-gradient(180deg, var(--navy) 0%, var(--navy-2) 100%);
     color:var(--text);
     font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif;
   }}
+
   .wrap {{ max-width: 760px; margin: 0 auto; padding: 16px 14px 28px; }}
 
   /* big centered total */
