@@ -1,1 +1,384 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Portfolio</title>
+<style>
+  :root {
+    --navy: #0b1530;
+    --navy-2: #0f1d49;
+    --navy-3: #132866;
+    --card: #101b3f;
+    --border: rgba(255,255,255,0.12); /* bumped from 0.08 for contrast */
+    --text: #eef2ff;
+    --muted: #b7c1e3;
+    --pos: #22c55e;
+    --neg: #ef4444;
+    --neu: #9aa3b2;
+    --accent: #60a5fa;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin:0; padding:0;
+    background: linear-gradient(180deg, var(--navy) 0%, var(--navy-2) 100%);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 16px 14px 28px; }
 
+  /* big centered total */
+  .totalbox { text-align:center; padding:18px 12px 10px; margin-bottom:8px; }
+  .totalbox .label { color:var(--text); font-size:1.35rem; font-weight:600; letter-spacing:.06em; text-transform:uppercase; }
+  .totalbox .value { font-size:2.35rem; font-weight:800; margin-top:4px; }
+
+  .meta { color:var(--muted); text-align:center; font-size:.9rem; margin:6px 0 14px; }
+
+  /* panels */
+  .panel, .hypo {
+    background:var(--card); border:1px solid var(--border); border-radius:14px;
+    padding:12px; margin:10px 2px 14px; box-shadow:0 10px 24px rgba(0,0,0,.25);
+  }
+  .panel { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .panel .title { font-weight:700; font-size:1rem; }
+  .panel .badge { margin-left:auto; }
+
+  /* hypothetical badges */
+  .hypo .title { font-weight:700; margin-bottom:8px; font-size:1rem; }
+  .badges { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+  .item { display:flex; align-items:center; gap:8px; }
+  .item .label { color:var(--muted); font-size:.88rem; }
+  .badge {
+    display:inline-block; min-width:70px; text-align:center;
+    border-radius:999px; padding:6px 10px; font-weight:800; color:#fff;
+  }
+  .badge.pos { background:var(--pos); }
+  .badge.neg { background:var(--neg); }
+  .badge.neu { background:var(--neu); }
+
+  /* holding cards */
+  .section-title { color:var(--muted); text-transform:uppercase; letter-spacing:.12em; font-size:.8rem; margin:8px 2px; }
+  .card {
+    background:var(--card); border:1px solid var(--border); border-radius:16px; padding:12px;
+    margin:10px 0; box-shadow:0 10px 24px rgba(0,0,0,.25);
+  }
+  .row1 { display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  .titlebox { display:flex; flex-direction:column; gap:2px; }
+  .name { font-weight:700; font-size:1.0rem; }
+  .ticker { color:var(--muted); font-size:.84rem; padding:2px 8px; border:1px solid var(--border); border-radius:999px; }
+  .row2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:8px; }
+  .metric { display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px dashed var(--border); }
+  .metric.sub { border-bottom:none; color:var(--muted); padding-top:8px; }
+  .label { color:var(--muted); font-size:.88rem; }
+  .val { font-weight:700; }
+  .right { text-align:right; }
+  .value { font-size:1.06rem; font-weight:800; color:rgba(233,131,0,1); }
+  .value-mobile { display:none; } /* hidden by default (desktop/tablet) */
+  .value-desktop { display:block; }
+
+  .perfs { display:flex; gap:10px; justify-content:flex-end; margin-top:6px; flex-wrap:wrap; }
+
+  /* perf chips */
+  .chip {
+    display:inline-flex; align-items:center; justify-content:center; gap:6px;
+    background:#0c1840; border:1px solid var(--border); border-radius:999px;
+    height:36px; min-width:110px; padding:0 12px;
+    font-size:.88rem; font-weight:700; color:var(--muted); white-space:nowrap;
+  }
+
+  .perf { font-weight:800; }
+  .perf.pos { color:var(--pos); }
+  .perf.neg { color:var(--neg); }
+  .perf.neu { color:var(--neu); }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+
+@media (max-width:480px){
+  .totalbox .label{font-size:1.2rem;}
+  .totalbox .value{font-size:2.05rem;}
+  .row1{align-items:flex-start;}
+  .value-mobile{display:block;}
+  .value-desktop{display:none;}
+  .row2{grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;}
+  .left{padding-right:6px;}
+  .right{text-align:initial;}
+
+  /* HOLDINGS chips unchanged */
+  .perfs{display:grid;grid-template-columns:1fr 1fr;gap:8px;justify-items:stretch;}
+  .chip{display:grid;grid-template-columns:1fr 50px;align-items:center;justify-content:space-between;width:100%;min-width:auto;height:36px;font-size:.9rem;padding:0 10px;font-weight:700;}
+
+  .card{padding:10px;margin:8px 0;border-radius:14px;}
+  .row1{margin-bottom:4px;}
+  .titlebox{gap:1px;}
+
+  /* ORIGINAL spacing */
+  .metric{padding:4px 0; border-bottom:1px dashed var(--border);}
+  .metric.sub{border-bottom:none; color:var(--muted); padding-top:8px;}
+
+  .panel{gap:8px;}
+
+  /* Align Hypothetical badges: 1M left, 6M center, 12M right */
+  .hypo .badges{display:flex;justify-content:space-between;gap:10px;width:100%;}
+  .hypo .badges .item{flex:1;display:flex;align-items:center;gap:8px;}
+  .hypo .badges .item:first-child{justify-content:flex-start;text-align:left;}
+  .hypo .badges .item:nth-child(2){justify-content:center;text-align:center;}
+  .hypo .badges .item:last-child{justify-content:flex-end;text-align:right;}
+
+  /* Actual Portfolio Performance badge */
+  .panel .badge{
+    min-width:113px;
+    padding:6px 10px;
+    border-radius:999px;
+    font-weight:800;
+    font-size:1rem;
+    line-height:normal;
+    height:auto;
+    text-align:center;
+    margin-right:0;
+  }
+}
+
+  @media (min-width: 720px) {
+    .wrap { padding:22px 20px 40px; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="totalbox" role="heading" aria-level="1">
+      <div class="label">Total Portfolio Value</div>
+      <div class="value">$ 115,475.45</div>
+    </div>
+    <div class="meta">USD→AUD 1.5146 • Updated 19 Sep 2025 23:19</div>
+
+    <!-- Actual Portfolio Performance (single-line badge) -->
+    <div class="panel">
+      <div class="title" role="heading" aria-level="2">Since Inception Performance</div>
+      <span class="badge neg">-1.8%</span>
+    </div>
+
+    <div class="hypo">
+      <div class="title" role="heading" aria-level="2">Hypothetical Past Performance</div>
+      <div class="badges">
+        <div class="item"><div class="label">1M</div><span class="badge neg">-0.2%</span></div>
+        <div class="item"><div class="label">6M</div><span class="badge pos">18.8%</span></div>
+        <div class="item"><div class="label">12M</div><span class="badge pos">26.9%</span></div>
+      </div>
+    </div>
+
+    <div class="section-title" role="heading" aria-level="2">Holdings</div>
+    
+        <div class="card">
+          <div class="row1">
+            <div class="titlebox">
+              <div class="name">Betashares Wealth Builder Diversified All Growth Geared (30-40% LVR) Complex ETF</div>
+              <div class="value value-mobile">$ 69,155.73</div>
+            </div>
+            <div class="ticker">GHHF</div>
+          </div>
+          <div class="row2">
+            <div class="left">
+              <div class="metric"><span class="label">Qty</span><span class="val">2077</span></div>
+              <div class="metric"><span class="label">Price (AUD)</span><span class="val">$ 33.29</span></div>
+              <div class="metric sub"><span class="label">Native</span><span class="val">33.29 AUD</span></div>
+            </div>
+            <div class="right">
+              <div class="value value-desktop">$ 69,155.73</div>
+              <div class="perfs">
+                <div class="chip">1M <span class="perf pos">0.2%</span></div>
+                <div class="chip">6M <span class="perf pos">16.3%</span></div>
+                <div class="chip">12M <span class="perf pos">20.9%</span></div>
+                <div class="chip">SI <span class="perf pos">7.2%</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+            
+        <div class="card">
+          <div class="row1">
+            <div class="titlebox">
+              <div class="name">Invesco S&amp;P 500 Momentum ETF</div>
+              <div class="value value-mobile">$ 11,411.34</div>
+            </div>
+            <div class="ticker">SPMO</div>
+          </div>
+          <div class="row2">
+            <div class="left">
+              <div class="metric"><span class="label">Qty</span><span class="val">62</span></div>
+              <div class="metric"><span class="label">Price (AUD)</span><span class="val">$ 183.95</span></div>
+              <div class="metric sub"><span class="label">Native</span><span class="val">121.45 USD</span></div>
+            </div>
+            <div class="right">
+              <div class="value value-desktop">$ 11,411.34</div>
+              <div class="perfs">
+                <div class="chip">1M <span class="perf pos">5.8%</span></div>
+                <div class="chip">6M <span class="perf pos">28.9%</span></div>
+                <div class="chip">12M <span class="perf pos">34.1%</span></div>
+                <div class="chip">SI <span class="perf pos">2.7%</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+            
+        <div class="card">
+          <div class="row1">
+            <div class="titlebox">
+              <div class="name">Global X Defence Tech ETF</div>
+              <div class="value value-mobile">$ 11,339.23</div>
+            </div>
+            <div class="ticker">DTEC</div>
+          </div>
+          <div class="row2">
+            <div class="left">
+              <div class="metric"><span class="label">Qty</span><span class="val">631</span></div>
+              <div class="metric"><span class="label">Price (AUD)</span><span class="val">$ 17.95</span></div>
+              <div class="metric sub"><span class="label">Native</span><span class="val">17.95 AUD</span></div>
+            </div>
+            <div class="right">
+              <div class="value value-desktop">$ 11,339.23</div>
+              <div class="perfs">
+                <div class="chip">1M <span class="perf pos">6.8%</span></div>
+                <div class="chip">6M <span class="perf pos">34.7%</span></div>
+                <div class="chip">12M <span class="perf pos">76.2%</span></div>
+                <div class="chip">SI <span class="perf pos">13.4%</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+            
+        <div class="card">
+          <div class="row1">
+            <div class="titlebox">
+              <div class="name">Figma, Inc.</div>
+              <div class="value value-mobile">$ 9,283.24</div>
+            </div>
+            <div class="ticker">FIG</div>
+          </div>
+          <div class="row2">
+            <div class="left">
+              <div class="metric"><span class="label">Qty</span><span class="val">104</span></div>
+              <div class="metric"><span class="label">Price (AUD)</span><span class="val">$ 88.47</span></div>
+              <div class="metric sub"><span class="label">Native</span><span class="val">58.41 USD</span></div>
+            </div>
+            <div class="right">
+              <div class="value value-desktop">$ 9,283.24</div>
+              <div class="perfs">
+                <div class="chip">1M <span class="perf neg">-19.7%</span></div>
+                <div class="chip">6M <span class="perf neu">-</span></div>
+                <div class="chip">12M <span class="perf neu">-</span></div>
+                <div class="chip">SI <span class="perf neg">-26.0%</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+            
+        <div class="card">
+          <div class="row1">
+            <div class="titlebox">
+              <div class="name">Macquarie Core Global Equity Active ETF</div>
+              <div class="value value-mobile">$ 6,594.56</div>
+            </div>
+            <div class="ticker">MQEG</div>
+          </div>
+          <div class="row2">
+            <div class="left">
+              <div class="metric"><span class="label">Qty</span><span class="val">512</span></div>
+              <div class="metric"><span class="label">Price (AUD)</span><span class="val">$ 12.88</span></div>
+              <div class="metric sub"><span class="label">Native</span><span class="val">12.88 AUD</span></div>
+            </div>
+            <div class="right">
+              <div class="value value-desktop">$ 6,594.56</div>
+              <div class="perfs">
+                <div class="chip">1M <span class="perf pos">1.2%</span></div>
+                <div class="chip">6M <span class="perf pos">12.4%</span></div>
+                <div class="chip">12M <span class="perf pos">22.8%</span></div>
+                <div class="chip">SI <span class="perf pos">27.8%</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+            
+        <div class="card">
+          <div class="row1">
+            <div class="titlebox">
+              <div class="name">GameStop Corp.</div>
+              <div class="value value-mobile">$ 4,656.76</div>
+            </div>
+            <div class="ticker">GME</div>
+          </div>
+          <div class="row2">
+            <div class="left">
+              <div class="metric"><span class="label">Qty</span><span class="val">118</span></div>
+              <div class="metric"><span class="label">Price (AUD)</span><span class="val">$ 39.20</span></div>
+              <div class="metric sub"><span class="label">Native</span><span class="val">25.88 USD</span></div>
+            </div>
+            <div class="right">
+              <div class="value value-desktop">$ 4,656.76</div>
+              <div class="perfs">
+                <div class="chip">1M <span class="perf pos">14.7%</span></div>
+                <div class="chip">6M <span class="perf pos">4.6%</span></div>
+                <div class="chip">12M <span class="perf pos">32.6%</span></div>
+                <div class="chip">SI <span class="perf neg">-54.8%</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+            
+        <div class="card">
+          <div class="row1">
+            <div class="titlebox">
+              <div class="name">Betashares Geared Australian Equities Complex ETF</div>
+              <div class="value value-mobile">$ 2,748.13</div>
+            </div>
+            <div class="ticker">GEAR</div>
+          </div>
+          <div class="row2">
+            <div class="left">
+              <div class="metric"><span class="label">Qty</span><span class="val">75</span></div>
+              <div class="metric"><span class="label">Price (AUD)</span><span class="val">$ 36.20</span></div>
+              <div class="metric sub"><span class="label">Native</span><span class="val">36.20 AUD</span></div>
+            </div>
+            <div class="right">
+              <div class="value value-desktop">$ 2,748.13</div>
+              <div class="perfs">
+                <div class="chip">1M <span class="perf neg">-4.7%</span></div>
+                <div class="chip">6M <span class="perf pos">25.4%</span></div>
+                <div class="chip">12M <span class="perf pos">14.2%</span></div>
+                <div class="chip">SI <span class="perf pos">9.3%</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+            
+        <div class="card">
+          <div class="row1">
+            <div class="titlebox">
+              <div class="name">SNDL Inc.</div>
+              <div class="value value-mobile">$ 286.46</div>
+            </div>
+            <div class="ticker">SNDL</div>
+          </div>
+          <div class="row2">
+            <div class="left">
+              <div class="metric"><span class="label">Qty</span><span class="val">73</span></div>
+              <div class="metric"><span class="label">Price (AUD)</span><span class="val">$ 3.88</span></div>
+              <div class="metric sub"><span class="label">Native</span><span class="val">2.56 USD</span></div>
+            </div>
+            <div class="right">
+              <div class="value value-desktop">$ 286.46</div>
+              <div class="perfs">
+                <div class="chip">1M <span class="perf pos">14.3%</span></div>
+                <div class="chip">6M <span class="perf pos">62.0%</span></div>
+                <div class="chip">12M <span class="perf pos">21.9%</span></div>
+                <div class="chip">SI <span class="perf neg">-80.3%</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+            
+  </div>
+</body>
+</html>
