@@ -107,6 +107,7 @@
   }
 
 @media (max-width:480px){
+  
   .totalbox .label{font-size:1.2rem;}
   .totalbox .value{font-size:2.05rem;}
   .row1{align-items:flex-start;}
@@ -115,39 +116,130 @@
   .row2{grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;}
   .left{padding-right:6px;}
   .right{text-align:initial;}
-
-  /* HOLDINGS chips unchanged */
+  
+  /* HOLDINGS chips in 2×2 grid */
   .perfs{display:grid;grid-template-columns:1fr 1fr;gap:8px;justify-items:stretch;}
-  .chip{display:grid;grid-template-columns:1fr 50px;align-items:center;justify-content:space-between;width:100%;min-width:auto;height:36px;font-size:.9rem;padding:0 10px;font-weight:700;}
+  .chip{
+    display:inline-flex;
+    align-items:center;
+    justify-content:flex-start;
+    gap:6px;
+    width:100%;
+    min-width:auto;
+    height:36px;
+    font-size:.9rem;
+    padding:0 10px;
+    font-weight:700;
+    background:#0c1840;
+    border:1px solid var(--border);
+    border-radius:999px;
+    color:var(--muted);
+  }
 
+  .perfs .chip{
+  display:grid;
+  grid-template-columns:28px 1fr;
+  column-gap:2px;
+  width:105px;
+}
+
+.perfs .chip .perf{
+  justify-self:end;   /* right-align the number in the second column */
+}
+  
   .card{padding:10px;margin:8px 0;border-radius:14px;}
   .row1{margin-bottom:4px;}
   .titlebox{gap:1px;}
-
-  /* ORIGINAL spacing */
-  .metric{padding:4px 0; border-bottom:1px dashed var(--border);}
-  .metric.sub{border-bottom:none; color:var(--muted); padding-top:8px;}
-
+  
+  /* equal spacing for Qty, Price, Native */
+  .metric {
+    padding:5px 0;
+    border-bottom:1px dashed var(--border);
+  }
+  .metric.sub {
+    border-bottom:none;
+    color:var(--muted);
+    padding:5px 0;
+  }
+  
   .panel{gap:8px;}
-
-  /* Align Hypothetical badges: 1M left, 6M center, 12M right */
-  .hypo .badges{display:flex;justify-content:space-between;gap:10px;width:100%;}
-  .hypo .badges .item{flex:1;display:flex;align-items:center;gap:8px;}
-  .hypo .badges .item:first-child{justify-content:flex-start;text-align:left;}
-  .hypo .badges .item:nth-child(2){justify-content:center;text-align:center;}
-  .hypo .badges .item:last-child{justify-content:flex-end;text-align:right;}
-
+  
   /* Actual Portfolio Performance badge */
   .panel .badge{
-    min-width:113px;
-    padding:6px 10px;
+    display:grid;
+    grid-template-columns:1fr;   /* no label, just value */
+    align-items:center;
+    justify-content:center;
+    background:#0c1840;
+    border:1px solid var(--border);
     border-radius:999px;
-    font-weight:800;
-    font-size:1rem;
-    line-height:normal;
-    height:auto;
+    height:36px;
+    padding:0 10px;
+    font-size:.9rem;
+    font-weight:700;
+    color:var(--muted);
+    min-width: calc((100% - 24px) / 3);
     text-align:center;
-    margin-right:0;
+  }
+
+    /* colour variants still apply */
+  .panel .badge.pos{ color:var(--pos); }
+  .panel .badge.neg{ color:var(--neg); }
+  .panel .badge.neu{ color:var(--neu); }
+  
+  /* HYPOTHETICAL panel pills styled like holdings chips, in one row */
+  .hypo .badges{ 
+    display:flex; 
+    flex-wrap:nowrap; 
+    gap:12px; 
+    width:100%; 
+    justify-content:flex-start; 
+  }
+  .hypo .badges .item{ 
+    flex:1; 
+    min-width:0; 
+    display:grid; 
+    grid-template-columns:1fr 50px; 
+    align-items:center; 
+    justify-content:space-between; 
+    background:#0c1840; 
+    border:1px solid var(--border); 
+    border-radius:999px; 
+    height:36px; 
+    padding:0 10px; 
+    font-size:.9rem; 
+    font-weight:700; 
+    color:var(--muted); 
+  }
+  .hypo .badges .item .label{ 
+    font-size:inherit; 
+    font-weight:inherit; 
+    color:var(--muted); 
+    margin:0; 
+  }
+  .hypo .badges .item .badge{ 
+    justify-self:end; 
+    background:none; 
+    border:none; 
+    min-width:auto; 
+    padding:0; 
+    text-align:right; 
+    font-size:.9rem; 
+    font-weight:800; 
+    color:var(--muted); 
+  }
+  .hypo .badges .item .badge.pos{ color:var(--pos); }
+  .hypo .badges .item .badge.neg{ color:var(--neg); }
+  .hypo .badges .item .badge.neu{ color:var(--neu); }
+  
+  /* dollar value (MarketValueAUD) back on the left under name */
+  .titlebox .value-mobile{
+    order:2;
+    text-align:left;
+    margin-top:2px;
+  }
+  .row2 .right .value-desktop{
+    display:none !important;
   }
 }
 
@@ -162,7 +254,7 @@
       <div class="label">Total Portfolio Value</div>
       <div class="value">$ 115,315.71</div>
     </div>
-    <div class="meta">USD→AUD 1.5160 • Updated 21 Sep 2025 09:53</div>
+    <div class="meta">USD→AUD 1.5160 • Updated 21 Sep 2025 12:54</div>
 
     <!-- Actual Portfolio Performance (single-line badge) -->
     <div class="panel">
