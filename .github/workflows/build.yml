@@ -2,55 +2,87 @@ name: Build portfolio report
 
 on:
   schedule:
-    - cron: "*/5 * * * *"   # run every 5 minutes (UTC)
+    - cron: "*/5 * * * *"   # runs every 5 minutes (UTC)
   workflow_dispatch:         # manual run button
 
+# Default to read; job elevates to contents:write only when pushing.
 permissions:
-  contents: write
+  contents: read
 
-concurrency:
-  group: build-portfolio
-  cancel-in-progress: true
+# Queue runs; do NOT cancel previous ones.
+concurrency: build-portfolio
 
 jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      TZ: Australia/Sydney   # local timestamps for your script
+      TZ: Australia/Sydney        # local timestamps for your script
+      PYTHONUNBUFFERED: "1"
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # allows rebase before push
 
-      - name: Set up Python 3.13
+      # Gentle jitter on scheduled runs to reduce rate/API contention
+      - name: Backoff (scheduled only)
+        if: github.event_name == 'schedule'
+        run: python - <<'PY'
+import random, time
+delay = random.randint(5, 60)
+print(f"Sleeping {delay}s to stagger scheduled runs...")
+time.sleep(delay)
+PY
+
+      - name: Set up Python 3.13 (with pip cache)
         uses: actions/setup-python@v5
         with:
           python-version: "3.13"
-
-      - name: Cache pip
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: ${{ runner.os }}-pip-
+          cache: 'pip'
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Heartbeat (log only)
-        run: echo "Scheduled run at $(date -u)"
+      - name: Heartbeat (UTC + local)
+        run: |
+          echo "UTC:   $(date -u)"
+          echo "Local: $(date)"
 
       - name: Generate report
         run: |
-          python generate.py        # update this filename if different!
+          python generate.py        # update filename if different
           mkdir -p docs
           cp report.html docs/index.html
 
-      - name: Commit updated report
+      - name: Upload report artifact (for debugging)
+        uses: actions/upload-artifact@v4
+        with:
+          name: portfolio-report
+          path: docs/index.html
+          if-no-files-found: error
+
+      # Only push from main/default branch
+      - name: Configure git user
+        if: startsWith(github.ref, 'refs/heads/')
         run: |
-          git config user.name "github-actions[bot]"
+          git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Rebase and push docs
+        if: startsWith(github.ref, 'refs/heads/')
+        permissions:
+          contents: write
+        run: |
+          # Rebase onto remote to avoid non-fast-forward when runs are queued
+          BRANCH="${GITHUB_REF#refs/heads/}"
+          git fetch origin "$BRANCH"
+          git checkout "$BRANCH"
+          git pull --rebase origin "$BRANCH"
+
           git add docs/index.html
           git diff --cached --quiet || git commit -m "Update report [skip ci]"
-          git push
+          # Retry push once if the first attempt races another run
+          (git push origin "$BRANCH") || (git pull --rebase origin "$BRANCH" && git push origin "$BRANCH")
